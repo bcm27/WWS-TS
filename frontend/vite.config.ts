@@ -2,6 +2,22 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+// Get API URL from environment variable, fallback to localhost for local dev
+const getApiTarget = () => {
+  const apiUrl = process.env.VITE_API_URL;
+  if (apiUrl) {
+    return apiUrl;
+  }
+  
+  // Check if we're in Docker (common environment variable pattern)
+  if (process.env.DOCKER_ENV || process.env.NODE_ENV === 'docker') {
+    return 'http://backend:3001';
+  }
+  
+  // Default for local development
+  return 'http://localhost:3001';
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -21,9 +37,12 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: getApiTarget(),
         changeOrigin: true,
         secure: false,
+        configure: (proxy, options) => {
+          console.log(`Proxying /api requests to: ${options.target}`);
+        },
       },
     },
   },

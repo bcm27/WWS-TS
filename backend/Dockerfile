@@ -3,6 +3,9 @@
 # Build stage
 FROM node:18-alpine AS builder
 
+# Install bash and postgresql-client for wait script
+RUN apk add --no-cache bash postgresql-client
+
 # Set working directory
 WORKDIR /app
 
@@ -10,7 +13,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install ALL dependencies (including dev dependencies for build)
-RUN npm ci && npm cache clean --force
+RUN npm install && npm cache clean --force
 
 # Copy source code
 COPY . .
@@ -20,6 +23,9 @@ RUN npm run build
 
 # Production stage
 FROM node:18-alpine AS production
+
+# Install bash and postgresql-client for wait script
+RUN apk add --no-cache bash postgresql-client curl
 
 # Create app user for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -32,11 +38,15 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --only=production && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/database ./database
+COPY --from=builder /app/scripts ./scripts
+
+# Make wait script executable
+RUN chmod +x scripts/wait-for-db.sh
 
 # Change ownership to nodejs user
 RUN chown -R nodejs:nodejs /app
@@ -46,10 +56,8 @@ USER nodejs
 EXPOSE 3001
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3001/health', (res) => { \
-        if (res.statusCode === 200) process.exit(0); else process.exit(1); })" \
-    || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
+    CMD curl -f http://localhost:3001/health || exit 1
 
-# Start the application
-CMD ["node", "dist/app.js"]
+# Use wait script before starting the application
+CMD ["./scripts/wait-for-db.sh", "database", "5432", "hardwood_selector", "postgres", "password", "node", "dist/app.js"]

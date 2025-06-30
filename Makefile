@@ -6,10 +6,10 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 dev: ## Start development environment
-	@./scripts/start-dev.sh
+	@./scripts/start_dev.sh
 
 prod: ## Deploy to production
-	@./scripts/deploy-prod.sh
+	@./scripts/deploy_prod.sh
 
 build: ## Build the application
 	@npm run build
@@ -43,4 +43,4 @@ stop: ## Stop all services
 	@docker-compose -f docker/docker-compose.yml down
 
 quick-start: ## Quick start for new users
-	@./scripts/quick-start.sh
+	@./scripts/quick_start.sh

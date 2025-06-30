@@ -1,8 +1,10 @@
 # Docker Compose for Hardwood Species Selector Development
 services:
-  # PostgreSQL Database
+  # PostgreSQL Database with custom Dockerfile
   database:
-    image: postgres:15-alpine
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.postgres
     container_name: hardwood-db
     restart: unless-stopped
     environment:
@@ -12,17 +14,16 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ../backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ../backend/database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
     ports:
       - "5432:5432"
     networks:
       - hardwood-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hardwood_selector && psql -U postgres -d hardwood_selector -c 'SELECT COUNT(*) FROM wood_species;' > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
 
   # Backend API
   backend:
@@ -51,13 +52,14 @@ services:
     networks:
       - hardwood-network
     volumes:
-      - ../backend/src:/app/src:ro
-      - ../backend/package.json:/app/package.json:ro
+      - ../backend/src:/app/src:ro,Z
+      - ../backend/package.json:/app/package.json:ro,Z
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 60s
 
   # Development Frontend with Vite dev server
   frontend:
@@ -67,44 +69,28 @@ services:
     container_name: hardwood-frontend-dev
     restart: unless-stopped
     environment:
-      - VITE_API_URL=http://localhost:3001
+      # Use the internal Docker network URL for API proxy
+      - VITE_API_URL=http://backend:3001
+      # Add flag to indicate Docker environment
+      - DOCKER_ENV=true
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - hardwood-network
     volumes:
-      - ../frontend/src:/app/src
-      - ../frontend/public:/app/public
-      - ../frontend/package.json:/app/package.json:ro
-      - ../frontend/index.html:/app/index.html:ro
-      - ../frontend/vite.config.ts:/app/vite.config.ts:ro
+      - ../frontend/src:/app/src:Z
+      - ../frontend/public:/app/public:Z
+      - ../frontend/package.json:/app/package.json:ro,Z
+      - ../frontend/index.html:/app/index.html:ro,Z
+      - ../frontend/vite.config.ts:/app/vite.config.ts:ro,Z
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5173/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # Production Frontend (uncomment for production-like testing)
-  # frontend-prod:
-  #   build:
-  #     context: ../frontend
-  #     dockerfile: Dockerfile
-  #     target: production
-  #   container_name: hardwood-frontend-prod
-  #   restart: unless-stopped
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - hardwood-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/health || exit 1"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
 
 volumes:
   postgres_data:

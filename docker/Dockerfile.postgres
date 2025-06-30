@@ -1,0 +1,9 @@
+# Custom PostgreSQL container with SQL files
+FROM postgres:15-alpine
+
+# Copy SQL files into the container (relative to the build context)
+COPY backend/database/schema.sql /docker-entrypoint-initdb.d/01-schema.sql
+COPY backend/database/seed.sql /docker-entrypoint-initdb.d/02-seed.sql
+
+# Set proper permissions
+RUN chmod 644 /docker-entrypoint-initdb.d/*.sql

@@ -4,21 +4,17 @@
 
 echo "Starting Hardwood Species Selector in development mode..."
 
+if [ "$DEVCONTAINER" = "true" ]; then
+    echo "Running in VS Code dev container mode..."
+    # Install dependencies if not present
+    if [ ! -d "node_modules" ]; then
+        npm run install:all
+    fi
+fi
+
 # Check if Docker is running
 if ! docker info > /dev/null 2>&1; then
     echo "Docker is not running. Please start Docker first."
-    exit 1
-fi
-
-# Check if docker-compose is available
-if ! command -v docker-compose &> /dev/null; then
-    echo "docker-compose not found. Please install docker-compose."
-    exit 1
-fi
-
-# Check if docker-compose file exists
-if [ ! -f "docker/docker-compose.yml" ]; then
-    echo "docker/docker-compose.yml not found. Please ensure the file exists."
     exit 1
 fi
 
@@ -36,8 +32,8 @@ echo ""
 echo "Development environment is ready!"
 echo ""
 echo "   Access the application:"
-echo "   Frontend: http://localhost"
-echo "   Backend API: http://localhost:3001"
+echo "   Frontend: http://127.0.0.1:5173/"
+echo "   Backend API: http://127.0.001:5173"
 echo "   Database: localhost:5432"
 echo ""
 echo "   Useful commands:"
