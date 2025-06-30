@@ -21,10 +21,6 @@ RUN npm run build
 # Production stage with nginx
 FROM nginx:alpine AS production
 
-# Create nginx user for security
-RUN addgroup -g 1001 -S nginx && \
-    adduser -S nginx -u 1001 -G nginx
-
 # Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
@@ -32,8 +28,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Create nginx directories and set permissions
+# Note: nginx user already exists in nginx:alpine, so we just set permissions
 RUN mkdir -p /var/cache/nginx /var/log/nginx /var/run && \
-    chown -R nginx:nginx /var/cache/nginx /var/log/nginx /var/run /usr/share/nginx/html /etc/nginx
+    chown -R nginx:nginx /var/cache/nginx /var/log/nginx /var/run /usr/share/nginx/html
 
 # Switch to nginx user
 USER nginx

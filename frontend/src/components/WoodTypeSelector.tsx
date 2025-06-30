@@ -1,4 +1,3 @@
-import React from 'react';
 import { WoodType, WoodTypeSelectorProps } from '@/types';
 import { getWoodTypeInfo, cn } from '@/utils';
 

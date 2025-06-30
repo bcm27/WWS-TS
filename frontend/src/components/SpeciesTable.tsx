@@ -1,6 +1,5 @@
-import React from 'react';
-import { ChevronUp, ChevronDown, Star, Heart } from 'lucide-react';
-import { SpeciesTableProps, WoodSpecies, SortConfig, TableColumn } from '@/types';
+import { ChevronUp, ChevronDown, Heart } from 'lucide-react';
+import { SpeciesTableProps, WoodSpecies, TableColumn } from '@/types';
 import { formatPrice, formatGrade, cn } from '@/utils';
 
 /**

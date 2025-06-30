@@ -75,90 +75,98 @@ export class SpeciesController {
   /**
    * Get species by wood type (generic endpoint)
    */
-  getSpeciesByType = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const woodType = req.params.type as WoodType;
-      
-      if (!await this.speciesService.validateWoodType(woodType)) {
-        return res.status(400).json({
-          success: false,
-          error: 'Bad Request',
-          message: 'Invalid wood type. Must be one of: domestic, exotic, plywood',
-          statusCode: 400,
-        });
-      }
-
-      const species = await this.speciesService.getSpeciesByType(woodType);
-      const count = species.length;
-
-      const response: GetSpeciesResponse = {
-        success: true,
-        data: species,
-        count,
-        message: count > 0 ? `Found ${count} ${woodType} wood species` : `No ${woodType} wood species found`,
-      };
-
-      res.json(response);
-    } catch (error) {
-      next(error);
+getSpeciesByType = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const woodType = req.params.type as WoodType;
+    
+    if (!await this.speciesService.validateWoodType(woodType)) {
+      res.status(400).json({
+        success: false,
+        error: 'Bad Request',
+        message: 'Invalid wood type. Must be one of: domestic, exotic, plywood',
+        statusCode: 400,
+      });
+      return; // Add explicit return
     }
-  };
+
+    const species = await this.speciesService.getSpeciesByType(woodType);
+    const count = species.length;
+
+    const response: GetSpeciesResponse = {
+      success: true,
+      data: species,
+      count,
+      message: count > 0 ? `Found ${count} ${woodType} wood species` : `No ${woodType} wood species found`,
+    };
+
+    res.json(response);
+    return; // Add explicit return
+  } catch (error) {
+    next(error);
+    return; // Add explicit return
+  }
+};
 
   /**
    * Search species
    */
-  searchSpecies = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { q: searchTerm, type: woodType } = req.query;
+  searchSpecies = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { q: searchTerm, type: woodType } = req.query;
 
-      if (!searchTerm || typeof searchTerm !== 'string') {
-        return res.status(400).json({
-          success: false,
-          error: 'Bad Request',
-          message: 'Search term (q) is required',
-          statusCode: 400,
-        });
-      }
-
-      if (searchTerm.length < 2) {
-        return res.status(400).json({
-          success: false,
-          error: 'Bad Request',
-          message: 'Search term must be at least 2 characters long',
-          statusCode: 400,
-        });
-      }
-
-      // Validate wood type if provided
-      if (woodType && !await this.speciesService.validateWoodType(woodType as string)) {
-        return res.status(400).json({
-          success: false,
-          error: 'Bad Request',
-          message: 'Invalid wood type. Must be one of: domestic, exotic, plywood',
-          statusCode: 400,
-        });
-      }
-
-      const species = await this.speciesService.searchSpecies(
-        searchTerm,
-        woodType as WoodType | undefined
-      );
-      const count = species.length;
-
-      const response: GetSpeciesResponse = {
-        success: true,
-        data: species,
-        count,
-        message: count > 0 
-          ? `Found ${count} species matching "${searchTerm}"` 
-          : `No species found matching "${searchTerm}"`,
-      };
-
-      res.json(response);
-    } catch (error) {
-      next(error);
+    if (!searchTerm || typeof searchTerm !== 'string') {
+      res.status(400).json({
+        success: false,
+        error: 'Bad Request',
+        message: 'Search term (q) is required',
+        statusCode: 400,
+      });
+      return; // Add explicit return
     }
-  };
+
+    if (searchTerm.length < 2) {
+      res.status(400).json({
+        success: false,
+        error: 'Bad Request',
+        message: 'Search term must be at least 2 characters long',
+        statusCode: 400,
+      });
+      return; // Add explicit return
+    }
+
+    // Validate wood type if provided
+    if (woodType && !await this.speciesService.validateWoodType(woodType as string)) {
+      res.status(400).json({
+        success: false,
+        error: 'Bad Request',
+        message: 'Invalid wood type. Must be one of: domestic, exotic, plywood',
+        statusCode: 400,
+      });
+      return; // Add explicit return
+    }
+
+    const species = await this.speciesService.searchSpecies(
+      searchTerm,
+      woodType as WoodType | undefined
+    );
+    const count = species.length;
+
+    const response: GetSpeciesResponse = {
+      success: true,
+      data: species,
+      count,
+      message: count > 0 
+        ? `Found ${count} species matching "${searchTerm}"` 
+        : `No species found matching "${searchTerm}"`,
+    };
+
+    res.json(response);
+    return; // Add explicit return
+  } catch (error) {
+    next(error);
+    return; // Add explicit return
+  }
+};
 
   /**
    * Get available wood types with counts
@@ -180,30 +188,33 @@ export class SpeciesController {
   /**
    * Health check endpoint
    */
-  healthCheck = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const isHealthy = await this.speciesService.healthCheck();
-      
-      if (!isHealthy) {
-        return res.status(503).json({
-          success: false,
-          error: 'Service Unavailable',
-          message: 'Database connection failed',
-          statusCode: 503,
-        });
-      }
-
-      res.json({
-        success: true,
-        data: {
-          status: 'healthy',
-          timestamp: new Date().toISOString(),
-          uptime: process.uptime(),
-        },
-        message: 'Service is healthy',
+  healthCheck = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const isHealthy = await this.speciesService.healthCheck();
+    
+    if (!isHealthy) {
+      res.status(503).json({
+        success: false,
+        error: 'Service Unavailable',
+        message: 'Database connection failed',
+        statusCode: 503,
       });
-    } catch (error) {
-      next(error);
+      return; // Add explicit return
     }
-  };
+
+    res.json({
+      success: true,
+      data: {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+      },
+      message: 'Service is healthy',
+    });
+    return; // Add explicit return
+  } catch (error) {
+    next(error);
+    return; // Add explicit return
+  }
+};
 }

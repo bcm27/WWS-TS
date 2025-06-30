@@ -6,13 +6,13 @@ import toast from 'react-hot-toast';
 import { FavoritesList } from '@/components/FavoritesList';
 import { useFavorites } from '@/hooks/useFavorites';
 import { localStorageService } from '@/utils/localStorage';
-import { downloadAsFile, cn } from '@/utils';
+import { downloadAsFile } from '@/utils';
 
 /**
  * Favorites page component - manage saved species
  */
 export function Favorites() {
-  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [_showImportDialog, setShowImportDialog] = useState(false);
   
   const {
     favorites,
@@ -33,38 +33,41 @@ export function Favorites() {
     }
   };
 
-  // Handle import favorites
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) {
+    setShowImportDialog(false);
+    return;
+  }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = e.target?.result as string;
-        const result = localStorageService.importFavorites(content);
-        
-        if (result.success) {
-          toast.success(`Imported ${result.imported} favorites`);
-          if (result.errors.length > 0) {
-            result.errors.forEach(error => toast.error(error));
-          }
-        } else {
-          toast.error('Failed to import favorites');
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const content = e.target?.result as string;
+      const result = localStorageService.importFavorites(content);
+
+      if (result.success) {
+        toast.success(`Imported ${result.imported} favorites`);
+        if (result.errors.length > 0) {
           result.errors.forEach(error => toast.error(error));
         }
-      } catch (error) {
-        console.error('Import error:', error);
-        toast.error('Failed to read import file');
+      } else {
+        toast.error('Failed to import favorites');
+        result.errors.forEach(error => toast.error(error));
       }
-    };
-    
-    reader.readAsText(file);
-    setShowImportDialog(false);
-    
-    // Reset file input
-    event.target.value = '';
+    } catch (error) {
+      console.error('Import error:', error);
+      toast.error('Failed to read import file');
+    } finally {
+      setShowImportDialog(false);
+    }
   };
+
+  reader.readAsText(file);
+
+  // Reset file input
+  event.target.value = '';
+};
 
   return (
     <div className="min-h-screen bg-gray-50">

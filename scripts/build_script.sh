@@ -267,7 +267,7 @@ run_tests() {
 # Function to show build summary
 show_summary() {
     echo ""
-    print_info "Build Summary:"
+    print_status "Build Summary:"
     echo "=============="
     
     if [ "$BUILD_TYPE" = "all" ] || [ "$BUILD_TYPE" = "backend" ]; then
@@ -290,11 +290,11 @@ show_summary() {
     
     echo ""
     print_info "Next steps:"
-    echo "   🐳 Build Docker images: docker-compose build"
-    echo "   🚀 Deploy to production: ./deploy-prod.sh"
-    echo "   🧪 Test locally: ./start-dev.sh"
+    echo "   Build Docker images: docker-compose -f docker/docker-compose.yml build"
+    echo "   Deploy to production: ./scripts/deploy-prod.sh"
+    echo "   Test locally: ./scripts/start-dev.sh"
+    echo "   Check status: docker-compose -f docker/docker-compose.yml ps"
 }
-
 # Main build process
 main() {
     local start_time=$(date +%s)

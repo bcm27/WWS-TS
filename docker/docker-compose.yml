@@ -1,7 +1,4 @@
 # Docker Compose for Hardwood Species Selector Development
-
-version: '3.8'
-
 services:
   # PostgreSQL Database
   database:
@@ -15,8 +12,8 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./backend/database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - ../backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ../backend/database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
     ports:
       - "5432:5432"
     networks:
@@ -30,7 +27,7 @@ services:
   # Backend API
   backend:
     build:
-      context: ./backend
+      context: ../backend
       dockerfile: Dockerfile
     container_name: hardwood-backend
     restart: unless-stopped
@@ -54,53 +51,60 @@ services:
     networks:
       - hardwood-network
     volumes:
-      - ./backend/src:/app/src:ro
-      - ./backend/package.json:/app/package.json:ro
+      - ../backend/src:/app/src:ro
+      - ../backend/package.json:/app/package.json:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Frontend Application
+  # Development Frontend with Vite dev server
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: production
-    container_name: hardwood-frontend
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    container_name: hardwood-frontend-dev
     restart: unless-stopped
+    environment:
+      - VITE_API_URL=http://localhost:3001
     ports:
-      - "80:80"
+      - "5173:5173"
     depends_on:
       - backend
     networks:
       - hardwood-network
+    volumes:
+      - ../frontend/src:/app/src
+      - ../frontend/public:/app/public
+      - ../frontend/package.json:/app/package.json:ro
+      - ../frontend/index.html:/app/index.html:ro
+      - ../frontend/vite.config.ts:/app/vite.config.ts:ro
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/health || exit 1"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5173/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Development Frontend (comment out production frontend above and uncomment this for dev)
-  # frontend-dev:
+  # Production Frontend (uncomment for production-like testing)
+  # frontend-prod:
   #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile.dev
-  #   container_name: hardwood-frontend-dev
+  #     context: ../frontend
+  #     dockerfile: Dockerfile
+  #     target: production
+  #   container_name: hardwood-frontend-prod
   #   restart: unless-stopped
-  #   environment:
-  #     - VITE_API_URL=http://localhost:3001
   #   ports:
-  #     - "5173:5173"
+  #     - "80:80"
   #   depends_on:
   #     - backend
   #   networks:
   #     - hardwood-network
-  #   volumes:
-  #     - ./frontend/src:/app/src
-  #     - ./frontend/public:/app/public
-  #     - ./frontend/package.json:/app/package.json:ro
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/health || exit 1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
 
 volumes:
   postgres_data:

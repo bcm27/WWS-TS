@@ -1,11 +1,9 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 import { Home } from '@/pages/Home';
 import { Favorites } from '@/pages/Favorites';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 /**
  * Main App component with routing and global providers

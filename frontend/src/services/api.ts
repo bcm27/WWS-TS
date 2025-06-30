@@ -189,6 +189,13 @@ export const speciesApi = {
     }
     return apiService.searchSpecies(searchTerm, woodType);
   },
+
+  /**
+   * Get available wood types with counts
+   */
+  async getWoodTypes(): Promise<{ type: WoodType; count: number }[]> {
+    return apiService.getWoodTypes();
+  },
 };
 
 // Error handling utilities

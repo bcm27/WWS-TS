@@ -2,7 +2,7 @@ export interface WoodSpecies {
   species: string;        // Required
   size: string;          // Required (in quarters: 4/4, 6/4, etc)
   price: number;         // Required (stored as double, displayed with $ prefix)
-  grade?: string;        // Optional (display as blank cell when undefined)
+  grade: string | undefined;        // Optional (display as blank cell when undefined)
   vendor: string;        // Required
 }
 

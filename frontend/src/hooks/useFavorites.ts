@@ -8,9 +8,7 @@ import { generateSpeciesId } from '@/utils';
  */
 export function useFavorites(): UseFavoritesReturn {
   const [favorites, setFavorites] = useState<FavoriteSpecies[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Load favorites from localStorage on mount
+  const [_isLoading, setIsLoading] = useState(true);  // Load favorites from localStorage on mount
   useEffect(() => {
     const loadFavorites = () => {
       try {
@@ -20,8 +18,7 @@ export function useFavorites(): UseFavoritesReturn {
         console.error('Error loading favorites:', error);
       } finally {
         setIsLoading(false);
-      }
-    };
+    };}
 
     loadFavorites();
   }, []);

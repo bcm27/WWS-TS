@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, RefreshCw, Settings, AlertCircle } from 'lucide-react';
+import { Heart, RefreshCw, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { WoodTypeSelector } from '@/components/WoodTypeSelector';
@@ -19,7 +19,6 @@ export function Home() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   
   const {
-    species,
     selectedWoodType,
     searchTerm,
     sortConfig,
@@ -49,7 +48,7 @@ export function Home() {
   }, []);
 
   // Handle favorite toggle
-  const handleToggleFavorite = (woodSpecies: WoodSpecies, woodType: WoodType) => {
+  const handleToggleFavorite = (woodSpecies: WoodSpecies, _woodType: WoodType) => {
     if (!selectedWoodType) return;
     
     const speciesIsFavorited = isFavorite(woodSpecies, selectedWoodType);

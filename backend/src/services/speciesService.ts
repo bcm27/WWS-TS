@@ -124,15 +124,15 @@ export class SpeciesService {
   /**
    * Transform database row to API format
    */
-  private transformDatabaseSpecies(dbSpecies: DatabaseWoodSpecies): WoodSpecies {
-    return {
-      species: dbSpecies.species,
-      size: dbSpecies.size,
-      price: Number(dbSpecies.price),
-      grade: dbSpecies.grade || undefined,
-      vendor: dbSpecies.vendor,
-    };
-  }
+private transformDatabaseSpecies(dbSpecies: DatabaseWoodSpecies): WoodSpecies {
+  return {
+    species: dbSpecies.species,
+    size: dbSpecies.size,
+    price: Number(dbSpecies.price),
+    grade: dbSpecies.grade ?? undefined, // Convert null to undefined
+    vendor: dbSpecies.vendor,
+  };
+}
 
   /**
    * Health check - verify database connection

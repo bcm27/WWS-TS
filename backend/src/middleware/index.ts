@@ -110,34 +110,37 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 /**
  * Validate wood type parameter
  */
-export const validateWoodType = (req: Request, res: Response, next: NextFunction) => {
+export const validateWoodType = (req: Request, res: Response, next: NextFunction): void => {
   const validTypes = ['domestic', 'exotic', 'plywood'];
   const woodType = req.params.type || req.query.type;
 
   if (!woodType || !validTypes.includes(woodType as string)) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       error: 'Bad Request',
       message: 'Invalid wood type. Must be one of: domestic, exotic, plywood',
       statusCode: 400,
     });
+    return; // Add explicit return
   }
 
   next();
+  return; // Add explicit return
 };
-
 /**
  * CORS preflight handler
  */
-export const corsPreflightHandler = (req: Request, res: Response, next: NextFunction) => {
+export const corsPreflightHandler = (req: Request, res: Response, next: NextFunction): void => {
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Origin', config.CORS_ORIGIN);
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Max-Age', '86400');
-    return res.sendStatus(200);
+    res.sendStatus(200);
+    return; // Add explicit return
   }
   next();
+  return; // Add explicit return
 };
 
 /**

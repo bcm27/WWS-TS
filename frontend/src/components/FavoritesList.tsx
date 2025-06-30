@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Trash2, Heart, Download, Upload, AlertCircle, Star } from 'lucide-react';
+import { useState } from 'react';
+import { Trash2, Heart, AlertCircle } from 'lucide-react';
 import { FavoritesListProps, FavoriteSpecies, MAX_FAVORITES } from '@/types';
-import { formatPrice, formatDate, formatRelativeTime, getWoodTypeInfo, cn } from '@/utils';
+import { formatPrice, formatRelativeTime, getWoodTypeInfo, cn } from '@/utils';
 
 /**
  * Component for displaying and managing favorites

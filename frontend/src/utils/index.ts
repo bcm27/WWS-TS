@@ -263,8 +263,18 @@ export function calculateBoardFeet(
 export function parseSize(size: string): number {
   // Handle quarter sizes (4/4, 6/4, etc.)
   if (size.includes('/')) {
-    const [numerator, denominator] = size.split('/').map(n => parseInt(n, 10));
-    return numerator / denominator;
+    const parts = size.split('/').map(n => parseInt(n, 10));
+    const numerator = parts[0];
+    const denominator = parts[1];
+    
+    // Check if both parts are valid numbers
+    if (numerator !== undefined && denominator !== undefined && 
+        !isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+      return numerator / denominator;
+    }
+    
+    // Return 0 for invalid fractions
+    return 0;
   }
   
   // Handle decimal sizes
