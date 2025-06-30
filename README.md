@@ -2,25 +2,7 @@
 
 A professional web application for selecting and managing hardwood species with filtering capabilities, sortable columns, and favorites management. Built with TypeScript, React, Express.js, and PostgreSQL.
 
-## 🌳 Features
-
-### Core Functionality
-- **Wood Type Selection**: Browse domestic, exotic, and plywood species
-- **Sortable Table**: Click column headers to sort by any field
-- **Search & Filter**: Real-time search across all species data
-- **Favorites Management**: Save up to 32 favorite species with persistent storage
-- **Responsive Design**: Optimized for desktop and mobile devices
-- **Export/Import**: Backup and share favorite collections
-
-### Technical Features
-- **Full TypeScript**: Type-safe frontend and backend
-- **RESTful API**: Clean, documented API endpoints
-- **Real-time Search**: Debounced search with instant results
-- **Error Handling**: Comprehensive error boundaries and user feedback
-- **Performance**: Optimized queries and caching
-- **Security**: Rate limiting, input validation, and CORS protection
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker and Docker Compose
@@ -70,7 +52,7 @@ A professional web application for selecting and managing hardwood species with 
    npm run dev
    ```
 
-## 📊 API Documentation
+## API Documentation
 
 ### Endpoints
 
@@ -103,7 +85,7 @@ A professional web application for selecting and managing hardwood species with 
 }
 ```
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### Wood Species Table
 
@@ -119,7 +101,7 @@ A professional web application for selecting and managing hardwood species with 
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
 
-## 🛠️ Development
+## Development
 
 ### Project Structure
 
@@ -215,27 +197,6 @@ docker-compose -f docker-compose.prod.yml up -d
 - **nginx-proxy**: Optional reverse proxy for SSL termination
 - **redis**: Optional cache layer
 
-## 🔧 Configuration
-
-### Database Configuration
-The application uses PostgreSQL with the following key features:
-- Automatic schema initialization
-- Sample data seeding
-- Indexed columns for performance
-- Full-text search capabilities
-
-### API Configuration
-- Rate limiting (100 requests per 15 minutes by default)
-- CORS enabled for specified origins
-- Request/response logging
-- Error handling with appropriate HTTP status codes
-
-### Frontend Configuration
-- Vite build system for fast development
-- Tailwind CSS for styling
-- React Router for navigation
-- Local storage for favorites persistence
-
 ## 📱 User Guide
 
 ### Getting Started
@@ -266,7 +227,7 @@ The application uses PostgreSQL with the following key features:
 - Visual indicators show current sort status
 - Maintains sort state during search
 
-## 🧪 Testing
+## Testing
 
 ### Backend Tests
 ```bash
@@ -292,40 +253,6 @@ docker-compose -f docker-compose.test.yml up -d
 # Run integration tests
 npm run test:integration
 ```
-
-## 🔐 Security
-
-### Implemented Security Measures
-- Input validation and sanitization
-- SQL injection prevention with parameterized queries
-- XSS protection with proper output encoding
-- CORS configuration for trusted origins
-- Rate limiting to prevent abuse
-- Security headers (HSTS, CSP, etc.)
-- Docker security with non-root users
-
-### Security Headers
-- `X-Frame-Options: SAMEORIGIN`
-- `X-XSS-Protection: 1; mode=block`
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Content-Security-Policy` with appropriate directives
-
-## 🚀 Performance
-
-### Optimization Features
-- Database indexing for fast queries
-- Gzip compression for static assets
-- Efficient React rendering with proper keys
-- Debounced search to reduce API calls
-- Lazy loading for large datasets
-- Browser caching for static resources
-
-### Performance Metrics
-- Initial page load: < 2 seconds
-- Search response time: < 200ms
-- Database query optimization with indexes
-- Bundle size optimization with code splitting
 
 ## 🔄 CI/CD
 
@@ -363,24 +290,9 @@ jobs:
 5. Ensure all tests pass
 6. Submit a pull request
 
-### Code Standards
-- TypeScript strict mode enabled
-- ESLint configuration enforced
-- Prettier for code formatting
-- Conventional commit messages
-- 100% test coverage for critical paths
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Support
-
-### Getting Help
-- Check the [Issues](../../issues) page for known problems
-- Create a new issue for bugs or feature requests
-- Review the API documentation for endpoint details
-- Check Docker logs for debugging: `docker-compose logs -f`
 
 ### Common Issues
 
@@ -406,18 +318,6 @@ docker system prune -a
 docker-compose build --no-cache
 ```
 
-## 🔮 Roadmap
-
-### Planned Features
-- [ ] User authentication and profiles
-- [ ] Advanced filtering options
-- [ ] Price history tracking
-- [ ] Vendor management system
-- [ ] Mobile app (React Native)
-- [ ] API rate limiting per user
-- [ ] Advanced analytics dashboard
-- [ ] Bulk import/export functionality
-
 ### Version History
 - **v1.0.0** - Initial release with core functionality
 - **v1.1.0** - Added favorites management
@@ -426,4 +326,4 @@ docker-compose build --no-cache
 
 ---
 
-Built with ❤️ using TypeScript, React, Express.js, and PostgreSQL.
+Built with using TypeScript, React, Express.js, and PostgreSQL.
